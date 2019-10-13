@@ -8,6 +8,10 @@ class Event {
 
 	}
 
+	void render() {
+		
+	}
+
 	void spawn() {
 
 	}

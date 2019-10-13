@@ -34,8 +34,8 @@ static int gridW;
 static int gridX;
 static int gridY;
 static int gridZ;
-static float defaultMass = 10;
-static float defaultVMult = 0.5;
+static float defaultMass = 25;
+static float defaultVMult = 0.65;
 
 
 BeatTimer timer;
@@ -76,6 +76,15 @@ void setup() {
   timer = new BeatTimer(50,-offset,bpm);
 
   mobs.add(new Flower(new PVector(0,0,0), new PVector(0,0,0), de/2,5));
+  mobs.add(new Grass(new PVector(-de/2,de,0), de/25, de/10));
+
+  flowers.add((Flower)mobs.get(0));
+  for (Ring ring : flowers.get(0).rings) {
+  	rings.add(ring);
+  	for (Triangle tri : ring.tris) {
+	  	tris.add(tri);
+	  }
+  }
 }
 
 void draw() {
@@ -91,6 +100,10 @@ void draw() {
 
   for (Mob mob : mobs) {
     mob.render();
+  }
+
+  for (Event event : events) {
+  	event.render();
   }
 }
 
@@ -108,6 +121,16 @@ void update() {
 
   updateEvents();
   updateMobs();
+
+
+  for (int i = 0 ; i < tris.size() ; i ++) {
+  	Triangle tri = tris.get(i);
+  	tri.ang.v.x += av[(int)((float)i/tris.size()*binCount)]*0.001;
+  	tri.fillStyle.r.X = av[i]*5;
+  	tri.fillStyle.g.X = av[i]*5;
+  	tri.fillStyle.b.X = av[i]*10;
+  }
+
 }
 
 void updateEvents() {

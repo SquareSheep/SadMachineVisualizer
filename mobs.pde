@@ -10,21 +10,21 @@ abstract class Mob {
 }
 
 class Grass extends Mob {
-	float w;
-	int index;
+	Point w;
 	AColor fillStyle = new AColor(100,255,100,200);
 	AColor strokeStyle = new AColor(255,255,255,255);
 
-	Grass(PVector p, float w) {
+	Grass(PVector p, float w, float h) {
 		this.p = new Point(p);
 		this.ang = new Point();
-		this.w = w;
+		this.w = new Point(w, h, w);
 	}
 
 	void update() {
 		p.update();
 		ang.update();
-		scale.update();
+		w.update();
+		sca.update();
 		fillStyle.update();
 		strokeStyle.update();
 	}
@@ -37,7 +37,9 @@ class Grass extends Mob {
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
 		rotateZ(ang.p.z);
-		triangle(-w/2,0, w/2,0, 0,w);
+		triangle(-w.p.x/2,0, w.p.x/2,0, 0,-w.p.y);
+		rotateY(PI/2);
+		triangle(-w.p.z/2,0, w.p.z/2,0, 0,-w.p.y);
 		pop();
 	}
 }
@@ -58,7 +60,8 @@ class Flower extends Mob {
 			temp = sum2;
 			sum2 += sum1;
 			sum1 = temp;
-			rings.add(new Ring(new PVector(0,0,-(float)i/nofRings*w/5), new PVector(0,0,0), w/nofRings*i, sum2, new PVector(PI*0.5-(float)i/nofRings*PI*0.4,0.3,0.1)));
+			rings.add(new Ring(new PVector(0,0,-(float)i/nofRings*w/5), new PVector(0,0,i*i*0.05), 
+			w/nofRings*i, sum2, new PVector(PI*0.5-(float)i/nofRings*PI*0.4,0.4-(float)i/nofRings*0.15,0.1)));
 		}
 	}
 
@@ -77,7 +80,6 @@ class Flower extends Mob {
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
 		rotateZ(ang.p.z);
-		rect(0,0,25,25);
 		for (Ring ring : rings) {
 			ring.render();
 		}
@@ -94,7 +96,7 @@ class Ring extends Mob {
 		this.ang = new Point(ang);
 		this.w = w;
 		for (int i = 0 ; i < num ; i ++) {
-			tris.add(new Triangle(new PVector(0,w,0),angTilt,de*0.05+w/3));
+			tris.add(new Triangle(new PVector(0,w,0),angTilt.copy(),de*0.05+w/3));
 		}
 	}
 
@@ -113,8 +115,9 @@ class Ring extends Mob {
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
 		rotateZ(ang.p.z);
+		float angle = 2*PI/tris.size();
 		for (int i = 0 ; i < tris.size() ; i ++) {
-			rotateZ((float)2*PI/tris.size());
+			rotateZ(angle);
 			tris.get(i).render();
 		}
 		pop();
@@ -125,7 +128,7 @@ class Triangle extends Mob {
 	
 	float w;
 	float h;
-	AColor fillStyle = new AColor(100,100,100,0);
+	AColor fillStyle = new AColor(0,0,0,255);
 	AColor strokeStyle = new AColor(255,255,255,255);
 
 	Triangle(PVector p, PVector ang, float w) {
