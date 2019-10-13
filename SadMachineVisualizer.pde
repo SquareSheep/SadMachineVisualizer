@@ -1,6 +1,8 @@
 static float bpm = 89.5;
 static float mspb = 1;
 static float framesPerBeat = 1;
+static float cos60 = cos(PI/3);
+static float sin60 = sin(PI/3);
 
 import ddf.minim.analysis.*;
 import ddf.minim.*;
@@ -67,6 +69,8 @@ void setup() {
 
   offset = millis();
   timer = new BeatTimer(50,-offset,bpm);
+
+  mobs.add(new Flower(new PVector(0,0,0), new PVector(0,0,0), de/10,2));
 }
 
 void draw() {

@@ -1,20 +1,74 @@
 abstract class Mob {
 	boolean finished = false;
-
+	Point p;
+	SpringValue scale = new SpringValue(1);
+	Point ang = new Point();
 	
 	abstract void update();
 
 	abstract void render();
 }
 
+class Flower extends Mob {
+
+	float w;
+	ArrayList<ArrayList<Triangle>> rings = new ArrayList<ArrayList<Triangle>>();
+
+	Flower(PVector p, PVector ang, float w, int nofRings) {
+		this.p = new Point(p);
+		this.ang = new Point(ang);
+		this.w = w;
+		int sum1 = 1;
+		int sum2 = 2;
+		int temp;
+		for (int i = 0 ; i < nofRings ; i ++) {
+			temp = sum2;
+			sum2 += sum1;
+			sum1 = temp;
+			rings.add(new ArrayList<Triangle>());
+			for (int k = 0 ; k < sum2 ; k ++) {
+				rings.get(i).add(new Triangle(new PVector(0,w/nofRings*(i+1),0), new PVector(0.6,0,0), w/nofRings*(i+1)));
+			}
+		}
+	}
+
+	void update() {
+		p.update();
+		scale.update();
+		ang.update();
+		for (ArrayList<Triangle> ring : rings) {
+			for (Triangle tri : ring) {
+				tri.update();
+			}
+		}
+	}
+
+	void render() {
+		push();
+		translate(p.p.x, p.p.y, p.p.z);
+		rotateX(ang.p.x);
+		rotateY(ang.p.y);
+		rotateZ(ang.p.z + (float)frameCount/300);
+		rect(-25,-25,50,50);
+		for (ArrayList<Triangle> ring : rings) {
+			push();
+			for (int i = 0 ; i < ring.size() ; i ++) {
+				Triangle tri = ring.get(i);
+				rotateZ((float)i/ring.size()*2*PI);
+				tri.render();
+			}
+			pop();
+		}
+		pop();
+	}
+}
+
 class Triangle extends Mob {
-	Point p;
-	SpringValue scale = new SpringValue(1);
+	
 	float w;
 	float h;
-	Point ang = new Point();
-	AColor fillStyle = new AColor(100,100,100,255);
-	AColor strokeStyle = new AColor(100,100,100,255);
+	AColor fillStyle = new AColor(100,100,100,0);
+	AColor strokeStyle = new AColor(255,255,255,255);
 
 	Triangle(PVector p, PVector ang, float w) {
 		this.p = new Point(p);
@@ -39,6 +93,19 @@ class Triangle extends Mob {
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
 		rotateZ(ang.p.z);
+		beginShape();
+		vertex(w, 0, h);
+		vertex(-cos60*w, sin60*w, h);
+		vertex(-cos60*w, -sin60*w, h);
+		vertex(w, 0, h);
+		endShape();
+		beginShape();
+		vertex(w, 0, -h);
+		vertex(-cos60*w, sin60*w, -h);
+		vertex(-cos60*w, -sin60*w, -h);
+		vertex(w, 0, -h);
+		endShape();
+		rotateX(PI/2);
 		pop();
 	}
 }
