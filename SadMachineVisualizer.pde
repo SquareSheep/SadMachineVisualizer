@@ -1,5 +1,4 @@
-static String songName = "sadmachine";
-static int bpm = 89;
+static float bpm = 89.5;
 static float mspb = 1;
 static float framesPerBeat = 1;
 
@@ -17,10 +16,6 @@ float avg;
 ArrayList<Event> events = new ArrayList<Event>();
 ArrayList<Mob> mobs = new ArrayList<Mob>();
 Camera cam;
-
-Tunnel tunnel;
-ArrayList<Wave> waves;
-ArrayList<Spoint> points;
 
 // GLOBAL ANIMATION VARIABLES -------------------
 AColor mobStroke = new AColor(255,255,255,255,0.5,10);
@@ -56,12 +51,6 @@ void setup() {
   gridZ = 2*aw/gridW;
 
   cam = new Camera(de/2, de/2, -de);
-  mobs.add(new Tunnel(new PVector(0,0,-aw), new PVector(de,de,aw*2), 10, 55));
-  tunnel = (Tunnel) mobs.get(0);
-  waves = tunnel.waves;
-  for (int i = 0 ; i < waves.size() ; i ++) {
-  	Wave wave = waves.get(i);
-  }
 
   textSize(de/10);
 
@@ -69,7 +58,7 @@ void setup() {
   textAlign(CENTER);
 
   mim = new Minim(this);
-  song = mim.loadFile("../Music/" + songName + ".mp3", 1024);
+  song = mim.loadFile("sadmachine.mp3", 1024);
   fft = new FFT(song.bufferSize(), song.sampleRate());
   
   addEvents();
@@ -87,9 +76,9 @@ void draw() {
 
   background(0);
 
-  //drawBorders();
-  //drawWidthBox(de);
-  //drawPitches();
+  drawBorders();
+  drawWidthBox(de);
+  drawPitches();
 
   for (Mob mob : mobs) {
     mob.render();

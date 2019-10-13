@@ -159,8 +159,8 @@ class Point {
   float mass;
 
   Point() {
-    this.p = new PVector();
-    this.P = new PVector();
+    this.p = new PVector(0,0,0);
+    this.P = new PVector(0,0,0);
     this.vMult = defaultVMult;
     this.mass = defaultMass;
   }
@@ -255,16 +255,15 @@ class SpringValue {
 }
 
 class BeatTimer {
-  //this.beat will be true exactly once every beat
   int offset;
-  int bpm;
+  float bpm;
   float sec;
   int threshold;
   boolean beat = false;
   boolean beatAlready = false;
   int tick = 1;
 
-  BeatTimer(int threshold, int offset, int bpm) {
+  BeatTimer(int threshold, int offset, float bpm) {
     this.bpm = bpm;
     this.sec = sec;
     this.offset = offset;

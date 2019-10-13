@@ -7,113 +7,39 @@ abstract class Mob {
 	abstract void render();
 }
 
-class Tunnel extends Mob {
+class Triangle extends Mob {
 	Point p;
-	Point ang = new Point(0,0,0);
-	ArrayList<Wave> waves = new ArrayList<Wave>();
-
-	Tunnel(PVector p, PVector w, int num, int num2) {
-		this.p = new Point(p);
-		for (int i = 0 ; i < num ; i ++) {
-			float angle = -(float)i/num*PI*0.8 + PI*0.35;
-			waves.add(new Wave(new PVector(cos(angle)*w.x/2,sin(angle)*w.y/2,0), w.z, num2));
-		}
-		for (int i = 0 ; i < num ; i ++) {
-			float angle = (float)i/num*PI*0.8 + PI*0.65;
-			waves.add(new Wave(new PVector(cos(angle)*w.x/2,sin(angle)*w.y/2,0), w.z, num2));
-		}
-	}
-
-	void update() {
-		for (int i = 0 ; i < waves.size() ; i ++) {
-			Wave wave = waves.get(i);
-			wave.update();
-		}
-	}
-
-	void render() {
-		push();
-		translate(p.p.x, p.p.y, p.p.z);
-		rotateX(ang.p.x);
-		rotateY(ang.p.y);
-		rotateZ(ang.p.z);
-		for (int i = 0 ; i < waves.size() - 1 ; i ++) {
-			Wave w1 = waves.get(i);
-			w1.render();
-			// Wave w2 = waves.get(i + 1);
-			// fill(255);
-			// for (int k = 0 ; k < w1.points.size() ; k ++) {
-			// 	Spoint p1 = w1.points.get(k);
-			// 	Spoint p2 = w2.points.get(k);
-			// 	push();
-			// 	translate(p1.p.p.x, p1.p.p.y, p1.p.p.z);
-			// 	line(w1.p.p.x, w1.p.p.y, w1.p.p.z, p2.p.p.x + w2.p.p.x, p2.p.p.x + w2.p.p.x, p2.p.p.x + w2.p.p.x);
-			// 	pop();
-			// }
-		}
-		pop();
-	}
-}
-
-class Wave extends Mob {
-	Point p;
-	Point ang = new Point(0,0,0);
-	SpringValue w;
-	ArrayList<Spoint> points = new ArrayList<Spoint>();
-
-	Wave(PVector p, float w, int num) {
-		this.p = new Point(p);
-		this.w = new SpringValue(w);
-		for (int i = 0 ; i < num ; i ++) {
-			points.add(new Spoint(0,0,(float)i/num*w, (int)((float)i/num*binCount)));
-		}
-
-	}
-
-	void update() {
-		p.update();
-		ang.update();
-		w.update();
-		for (int i = 0 ; i < points.size() ; i ++) {
-			Spoint point = points.get(i);
-			if (i % 2 == 0) {
-				point.p.v.y -= av[point.index]/2;
-			} else {
-				point.p.v.y += av[point.index]/2;
-			}
-			point.update();
-		}
-	}
-	
-	void render() {
-		push();
-		translate(p.p.x, p.p.y, p.p.z);
-		rotateX(ang.p.x);
-		rotateY(ang.p.y);
-		rotateZ(ang.p.z);
-		for (int i = 0 ; i < points.size() - 1 ; i ++) {
-			Spoint p1 = points.get(i);
-			Spoint p2 = points.get(i + 1);
-			p1.strokeStyle.strokeStyle();
-			line(p1.p.p.x, p1.p.p.y, p1.p.p.z, p2.p.p.x, p2.p.p.y, p2.p.p.z);
-		}
-		pop();
-	}
-}
-
-class Spoint {
-	Point p;
+	SpringValue scale = new SpringValue(1);
+	float w;
+	float h;
+	Point ang = new Point();
+	AColor fillStyle = new AColor(100,100,100,255);
 	AColor strokeStyle = new AColor(100,100,100,255);
-	int index;
 
-	Spoint(float x, float y, float z, int index) {
-		this.p = new Point(x, y, z);
-		this.index = index;
+	Triangle(PVector p, PVector ang, float w) {
+		this.p = new Point(p);
+		this.ang = new Point(ang);
+		this.w = w;
+		this.h = w/10;
 	}
 
 	void update() {
 		p.update();
+		scale.update();
+		ang.update();
+		fillStyle.update();
 		strokeStyle.update();
+	}
+
+	void render() {
+		push();
+		fillStyle.fillStyle();
+		strokeStyle.strokeStyle();
+		translate(p.p.x, p.p.y, p.p.z);
+		rotateX(ang.p.x);
+		rotateY(ang.p.y);
+		rotateZ(ang.p.z);
+		pop();
 	}
 }
 
