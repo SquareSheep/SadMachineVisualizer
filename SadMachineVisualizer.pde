@@ -19,6 +19,11 @@ ArrayList<Event> events = new ArrayList<Event>();
 ArrayList<Mob> mobs = new ArrayList<Mob>();
 Camera cam;
 
+ArrayList<Flower> flowers = new ArrayList<Flower>();
+ArrayList<Ring> rings = new ArrayList<Ring>();
+ArrayList<Triangle> tris = new ArrayList<Triangle>();
+ArrayList<Grass> grass = new ArrayList<Grass>();
+
 // GLOBAL ANIMATION VARIABLES -------------------
 AColor mobStroke = new AColor(255,255,255,255,0.5,10);
 AColor mobFill = new AColor(255,255,255,255,0.5,10);
@@ -70,7 +75,7 @@ void setup() {
   offset = millis();
   timer = new BeatTimer(50,-offset,bpm);
 
-  mobs.add(new Flower(new PVector(0,0,0), new PVector(0,0,0), de/10,2));
+  mobs.add(new Flower(new PVector(0,0,0), new PVector(0,0,0), de/2,5));
 }
 
 void draw() {
@@ -95,6 +100,8 @@ void update() {
   currTime = song.position();
 
   cam.update();
+  cam.ang.P.y = -(float)mouseX/width*2*PI;
+  cam.ang.P.x = -(float)mouseY/height*2*PI;
   mobFill.update();
   mobStroke.update();
   timer.update();

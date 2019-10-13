@@ -1,7 +1,7 @@
 abstract class Mob {
 	boolean finished = false;
 	Point p;
-	SpringValue scale = new SpringValue(1);
+	SpringValue sca = new SpringValue(1);
 	Point ang = new Point();
 	
 	abstract void update();
@@ -9,10 +9,43 @@ abstract class Mob {
 	abstract void render();
 }
 
+class Grass extends Mob {
+	float w;
+	int index;
+	AColor fillStyle = new AColor(100,255,100,200);
+	AColor strokeStyle = new AColor(255,255,255,255);
+
+	Grass(PVector p, float w) {
+		this.p = new Point(p);
+		this.ang = new Point();
+		this.w = w;
+	}
+
+	void update() {
+		p.update();
+		ang.update();
+		scale.update();
+		fillStyle.update();
+		strokeStyle.update();
+	}
+
+	void render() {
+		push();
+		fillStyle.fillStyle();
+		strokeStyle.strokeStyle();
+		translate(p.p.x,p.p.y,p.p.z);
+		rotateX(ang.p.x);
+		rotateY(ang.p.y);
+		rotateZ(ang.p.z);
+		triangle(-w/2,0, w/2,0, 0,w);
+		pop();
+	}
+}
+
 class Flower extends Mob {
 
 	float w;
-	ArrayList<ArrayList<Triangle>> rings = new ArrayList<ArrayList<Triangle>>();
+	ArrayList<Ring> rings = new ArrayList<Ring>();
 
 	Flower(PVector p, PVector ang, float w, int nofRings) {
 		this.p = new Point(p);
@@ -21,25 +54,20 @@ class Flower extends Mob {
 		int sum1 = 1;
 		int sum2 = 2;
 		int temp;
-		for (int i = 0 ; i < nofRings ; i ++) {
+		for (int i = 1 ; i <= nofRings ; i ++) {
 			temp = sum2;
 			sum2 += sum1;
 			sum1 = temp;
-			rings.add(new ArrayList<Triangle>());
-			for (int k = 0 ; k < sum2 ; k ++) {
-				rings.get(i).add(new Triangle(new PVector(0,w/nofRings*(i+1),0), new PVector(0.6,0,0), w/nofRings*(i+1)));
-			}
+			rings.add(new Ring(new PVector(0,0,-(float)i/nofRings*w/5), new PVector(0,0,0), w/nofRings*i, sum2, new PVector(PI*0.5-(float)i/nofRings*PI*0.4,0.3,0.1)));
 		}
 	}
 
 	void update() {
 		p.update();
-		scale.update();
+		sca.update();
 		ang.update();
-		for (ArrayList<Triangle> ring : rings) {
-			for (Triangle tri : ring) {
-				tri.update();
-			}
+		for (Ring ring : rings) {
+			ring.update();
 		}
 	}
 
@@ -48,16 +76,46 @@ class Flower extends Mob {
 		translate(p.p.x, p.p.y, p.p.z);
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
-		rotateZ(ang.p.z + (float)frameCount/300);
-		rect(-25,-25,50,50);
-		for (ArrayList<Triangle> ring : rings) {
-			push();
-			for (int i = 0 ; i < ring.size() ; i ++) {
-				Triangle tri = ring.get(i);
-				rotateZ((float)i/ring.size()*2*PI);
-				tri.render();
-			}
-			pop();
+		rotateZ(ang.p.z);
+		rect(0,0,25,25);
+		for (Ring ring : rings) {
+			ring.render();
+		}
+		pop();
+	}
+}
+
+class Ring extends Mob {
+	float w;
+	ArrayList<Triangle> tris = new ArrayList<Triangle>();
+
+	Ring(PVector p, PVector ang, float w, int num, PVector angTilt) {
+		this.p = new Point(p);
+		this.ang = new Point(ang);
+		this.w = w;
+		for (int i = 0 ; i < num ; i ++) {
+			tris.add(new Triangle(new PVector(0,w,0),angTilt,de*0.05+w/3));
+		}
+	}
+
+	void update() {
+		p.update();
+		ang.update();
+		sca.update();
+		for (Triangle tri : tris) {
+			tri.update();
+		}
+	}
+
+	void render() {
+		push();
+		translate(p.p.x, p.p.y, p.p.z);
+		rotateX(ang.p.x);
+		rotateY(ang.p.y);
+		rotateZ(ang.p.z);
+		for (int i = 0 ; i < tris.size() ; i ++) {
+			rotateZ((float)2*PI/tris.size());
+			tris.get(i).render();
 		}
 		pop();
 	}
@@ -79,7 +137,7 @@ class Triangle extends Mob {
 
 	void update() {
 		p.update();
-		scale.update();
+		sca.update();
 		ang.update();
 		fillStyle.update();
 		strokeStyle.update();
@@ -92,7 +150,7 @@ class Triangle extends Mob {
 		translate(p.p.x, p.p.y, p.p.z);
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
-		rotateZ(ang.p.z);
+		rotateZ(ang.p.z+PI/2);
 		beginShape();
 		vertex(w, 0, h);
 		vertex(-cos60*w, sin60*w, h);
@@ -106,99 +164,6 @@ class Triangle extends Mob {
 		vertex(w, 0, -h);
 		endShape();
 		rotateX(PI/2);
-		pop();
-	}
-}
-
-class TextBox extends Mob {
-	String string = "";
-	Point p;
-	SpringValue ang = new SpringValue(0);
-	AColor fillStyle = new AColor(255,255,255,255);
-	AColor strokeStyle = new AColor(255,255,255,255);
-	int timeEnd;
-
-	TextBox(String string, Point p, int timeEnd) {
-		this.string = string;
-		this.p = p.copy();
-		this.timeEnd = timeEnd;
-	}
-
-	TextBox(String string, float x, float y, float z, int timeEnd) {
-		this.string = string;
-		this.p = new Point(x, y, z);
-		this.timeEnd = timeEnd;
-	}
-
-	void update() {
-		p.update();
-		ang.update();
-		if (currTime > timeEnd) finished = true;
-	}
-
-	void render() {
-		push();
-		fillStyle.fillStyle();
-		strokeStyle.strokeStyle();
-		translate(p.p.x, p.p.y);
-		rotate(ang.x);
-		text(string, 0,0);
-		pop();
-	}
-
-	void addText(String string) {
-		this.string += string;
-	}
-}
-
-class Box3d extends Mob {
-	Point p;
-	Point w;
-	Point ang;
-	PVector dang;
-	PVector dp;
-	PVector dw;
-	AColor fillStyle = new AColor(100,100,100,100);
-	AColor strokeStyle = new AColor(100,100,100,100);
-	int i;
-
-
-	Box3d(Point p, Point w) {
-		println(p.p.x + " " + p.p.y + " " + p.p.z);
-		this.p = p.copy();
-		this.w = w;
-		this.ang = new Point();
-		this.dp = p.p.copy();
-		this.dang = new PVector();
-		this.dw = w.p.copy();
-	}
-
-	Box3d(Point p, Point w, Point ang) {
-		this.p = p.copy();
-		this.w = w;
-		this.ang = ang.copy();
-		this.dang = ang.p.copy();
-		this.dp = p.p.copy();
-		this.dw = w.p.copy();
-	}
-
-	void update() {
-		p.update();
-		w.update();
-		ang.update();
-		fillStyle.update();
-		strokeStyle.update();
-	}
-
-	void render() {
-		push();
-		fillStyle.fillStyle();
-		strokeStyle.strokeStyle();
-		translate(p.p.x, p.p.y, p.p.z);
-		rotateX(ang.p.x);
-		rotateY(ang.p.y);
-		rotateZ(ang.p.z);
-		box(w.p.x, w.p.y, w.p.z);
 		pop();
 	}
 }
