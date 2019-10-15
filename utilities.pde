@@ -16,10 +16,10 @@ void calcFFT() {
   avg /= av.length;
 
   for (int i = 0 ; i < av.length ; i ++) {
-    if (av[i] < avg*1.2) {
-      av[i] /= 2;
+    if (av[i] < avg*1.8) {
+      av[i] /= 3;
     } else {
-      av[i] += (av[i] - avg * 1.2) /10;
+      av[i] += (av[i] - avg * 1.8) /2;
     }
     if (av[i] > max) max = av[i];
   }

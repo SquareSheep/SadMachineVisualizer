@@ -11,7 +11,7 @@ abstract class Mob {
 
 class Grass extends Mob {
 	Point w;
-	AColor fillStyle = new AColor(100,255,100,200);
+	AColor fillStyle = new AColor(100,255,100,100);
 	AColor strokeStyle = new AColor(255,255,255,255);
 
 	Grass(PVector p, float w, float h) {
@@ -60,7 +60,7 @@ class Flower extends Mob {
 			temp = sum2;
 			sum2 += sum1;
 			sum1 = temp;
-			rings.add(new Ring(new PVector(0,0,-(float)i/nofRings*w/5), new PVector(0,0,i*i*0.05), 
+			rings.add(new Ring(new PVector(0,0,(0.7-(float)i/nofRings)*w*0.5), new PVector(0,0,i*i*0.05), 
 			w/nofRings*i, sum2, new PVector(PI*0.5-(float)i/nofRings*PI*0.4,0.4-(float)i/nofRings*0.15,0.1)));
 		}
 	}
@@ -128,8 +128,9 @@ class Triangle extends Mob {
 	
 	float w;
 	float h;
-	AColor fillStyle = new AColor(0,0,0,255);
+	AColor fillStyle = new AColor(0,0,0,100);
 	AColor strokeStyle = new AColor(255,255,255,255);
+	boolean draw = true;
 
 	Triangle(PVector p, PVector ang, float w) {
 		this.p = new Point(p);
@@ -147,26 +148,28 @@ class Triangle extends Mob {
 	}
 
 	void render() {
-		push();
-		fillStyle.fillStyle();
-		strokeStyle.strokeStyle();
-		translate(p.p.x, p.p.y, p.p.z);
-		rotateX(ang.p.x);
-		rotateY(ang.p.y);
-		rotateZ(ang.p.z+PI/2);
-		beginShape();
-		vertex(w, 0, h);
-		vertex(-cos60*w, sin60*w, h);
-		vertex(-cos60*w, -sin60*w, h);
-		vertex(w, 0, h);
-		endShape();
-		beginShape();
-		vertex(w, 0, -h);
-		vertex(-cos60*w, sin60*w, -h);
-		vertex(-cos60*w, -sin60*w, -h);
-		vertex(w, 0, -h);
-		endShape();
-		rotateX(PI/2);
-		pop();
+		if (draw) {
+			push();
+			fillStyle.fillStyle();
+			strokeStyle.strokeStyle();
+			translate(p.p.x, p.p.y, p.p.z);
+			rotateX(ang.p.x);
+			rotateY(ang.p.y);
+			rotateZ(ang.p.z-PI/2);
+			beginShape();
+			vertex(-w, 0, 0);
+			vertex(cos60*w, sin60*w, 0);
+			vertex(cos60*w, -sin60*w, 0);
+			vertex(-w, 0, 0);
+			endShape();
+			// beginShape();
+			// vertex(w, 0, -h);
+			// vertex(-cos60*w, sin60*w, -h);
+			// vertex(-cos60*w, -sin60*w, -h);
+			// vertex(w, 0, -h);
+			// endShape();
+			rotateX(PI/2);
+			pop();
+		}
 	}
 }

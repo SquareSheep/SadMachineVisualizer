@@ -17,6 +17,10 @@ class Event {
 	}
 }
 
+class Anyone000s003 extends Event {
+
+}
+
 class RestartSong extends Event {
 	RestartSong(int time) {
 		this.time = time;
@@ -27,6 +31,10 @@ class RestartSong extends Event {
 		println("RESTART");
 		seekTo(0);
 		mobs.clear();
+		flowers.clear();
+		rings.clear();
+		tris.clear();
+		grass.clear();
 		for (Event event : events) {
 			event.spawned = false;
 			event.finished = false;

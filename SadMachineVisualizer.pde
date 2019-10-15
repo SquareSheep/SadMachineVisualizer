@@ -34,8 +34,8 @@ static int gridW;
 static int gridX;
 static int gridY;
 static int gridZ;
-static float defaultMass = 25;
-static float defaultVMult = 0.65;
+static float defaultMass = 10;
+static float defaultVMult = 0.4;
 
 
 BeatTimer timer;
@@ -75,15 +75,31 @@ void setup() {
   offset = millis();
   timer = new BeatTimer(50,-offset,bpm);
 
-  mobs.add(new Flower(new PVector(0,0,0), new PVector(0,0,0), de/2,5));
-  mobs.add(new Grass(new PVector(-de/2,de,0), de/25, de/10));
+  mobs.add(new Flower(new PVector(0,-de*0.7,-aw), new PVector(0,0,0), de*0.65,6));
+  mobs.add(new Flower(new PVector(-de*0.6,0,0), new PVector(0,1,0), de*0.3,5));
+  mobs.add(new Flower(new PVector(de*0.6,0,0), new PVector(0,-1,0), de*0.3,5));
 
-  flowers.add((Flower)mobs.get(0));
-  for (Ring ring : flowers.get(0).rings) {
-  	rings.add(ring);
-  	for (Triangle tri : ring.tris) {
-	  	tris.add(tri);
-	  }
+  for (int i = 0 ; i < mobs.size() ; i ++) {
+    Flower flower = (Flower) mobs.get(i);
+    flowers.add(flower);
+    for (Ring ring : flower.rings) {
+      rings.add(ring);
+      for (Triangle tri : ring.tris) {
+        tris.add(tri);
+      }
+    }
+  }
+
+  float wX = de*3;
+  float wZ = de*3;
+  float X = 0;
+  float Z = -aw*1.8;
+  int row = (int) sqrt(binCount);
+  for (int i = 0 ; i < row ; i ++) {
+    for (int k = 0 ; k < row*2 ; k++) {
+      mobs.add(new Grass(new PVector(X + wX * ((float)i/row - 0.5),de,Z + wZ * ((float)k/row - 0.5)), de*0.2,de*0.1));
+      grass.add((Grass) mobs.get(mobs.size() -1));
+    }
   }
 }
 
@@ -94,9 +110,9 @@ void draw() {
 
   background(0);
 
-  drawBorders();
-  drawWidthBox(de);
-  drawPitches();
+  // drawBorders();
+  // drawWidthBox(de);
+  // drawPitches();
 
   for (Mob mob : mobs) {
     mob.render();
@@ -122,13 +138,22 @@ void update() {
   updateEvents();
   updateMobs();
 
-
+  int k;
   for (int i = 0 ; i < tris.size() ; i ++) {
   	Triangle tri = tris.get(i);
-  	tri.ang.v.x += av[(int)((float)i/tris.size()*binCount)]*0.001;
-  	tri.fillStyle.r.X = av[i]*5;
-  	tri.fillStyle.g.X = av[i]*5;
-  	tri.fillStyle.b.X = av[i]*10;
+    k = (int)((float)i/tris.size()*binCount);
+  	tri.ang.v.x += av[k]*0.003;
+  	tri.fillStyle.g.X = av[k]*5 + k;
+  	tri.fillStyle.b.X = av[k]*5 + 255 - k;
+  	tri.fillStyle.r.X = av[k]*9;
+  }
+  for (int i = 0 ; i < grass.size() ; i ++) {
+    Grass gr = grass.get(i);
+    k = (int)((float)i/grass.size()*binCount);
+    gr.fillStyle.g.X = av[k]*5 + k;
+    gr.fillStyle.b.X = av[k]*5 + 255 - k;
+    gr.fillStyle.r.X = av[k]*9;
+    gr.w.v.y += av[k]*0.5;
   }
 
 }
