@@ -137,25 +137,6 @@ void update() {
 
   updateEvents();
   updateMobs();
-
-  int k;
-  for (int i = 0 ; i < tris.size() ; i ++) {
-  	Triangle tri = tris.get(i);
-    k = (int)((float)i/tris.size()*binCount);
-  	tri.ang.v.x += av[k]*0.003;
-  	tri.fillStyle.g.X = av[k]*5 + k;
-  	tri.fillStyle.b.X = av[k]*5 + 255 - k;
-  	tri.fillStyle.r.X = av[k]*9;
-  }
-  for (int i = 0 ; i < grass.size() ; i ++) {
-    Grass gr = grass.get(i);
-    k = (int)((float)i/grass.size()*binCount);
-    gr.fillStyle.g.X = av[k]*5 + k;
-    gr.fillStyle.b.X = av[k]*5 + 255 - k;
-    gr.fillStyle.r.X = av[k]*9;
-    gr.w.v.y += av[k]*0.5;
-  }
-
 }
 
 void updateEvents() {

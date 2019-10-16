@@ -11,8 +11,8 @@ abstract class Mob {
 
 class Grass extends Mob {
 	Point w;
-	AColor fillStyle = new AColor(100,255,100,100);
-	AColor strokeStyle = new AColor(255,255,255,255);
+	AColor fillStyle = new AColor(0,0,0,0);
+	AColor strokeStyle = new AColor(0,0,0,0);
 
 	Grass(PVector p, float w, float h) {
 		this.p = new Point(p);
@@ -128,8 +128,8 @@ class Triangle extends Mob {
 	
 	float w;
 	float h;
-	AColor fillStyle = new AColor(0,0,0,100);
-	AColor strokeStyle = new AColor(255,255,255,255);
+	AColor fillStyle = new AColor(0,0,0,0);
+	AColor strokeStyle = new AColor(0,0,0,0);
 	boolean draw = true;
 
 	Triangle(PVector p, PVector ang, float w) {
