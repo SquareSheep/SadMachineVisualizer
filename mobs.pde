@@ -1,5 +1,6 @@
 abstract class Mob {
 	boolean finished = false;
+	boolean draw = true;
 	Point p;
 	SpringValue sca = new SpringValue(1);
 	Point ang = new Point();
@@ -37,9 +38,9 @@ class Grass extends Mob {
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
 		rotateZ(ang.p.z);
-		triangle(-w.p.x/2,0, w.p.x/2,0, 0,-w.p.y);
+		quad(-w.p.x/2,0, 0,w.p.y, w.p.x/2,0, 0,-w.p.y);
 		rotateY(PI/2);
-		triangle(-w.p.z/2,0, w.p.z/2,0, 0,-w.p.y);
+		quad(-w.p.z/2,0, 0,w.p.y, w.p.z/2,0, 0,-w.p.y);
 		pop();
 	}
 }
@@ -77,6 +78,7 @@ class Flower extends Mob {
 	void render() {
 		push();
 		translate(p.p.x, p.p.y, p.p.z);
+		scale(sca.x);
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
 		rotateZ(ang.p.z);
@@ -112,6 +114,7 @@ class Ring extends Mob {
 	void render() {
 		push();
 		translate(p.p.x, p.p.y, p.p.z);
+		scale(sca.x);
 		rotateX(ang.p.x);
 		rotateY(ang.p.y);
 		rotateZ(ang.p.z);
@@ -130,7 +133,6 @@ class Triangle extends Mob {
 	float h;
 	AColor fillStyle = new AColor(0,0,0,0);
 	AColor strokeStyle = new AColor(0,0,0,0);
-	boolean draw = true;
 
 	Triangle(PVector p, PVector ang, float w) {
 		this.p = new Point(p);
