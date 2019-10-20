@@ -5,15 +5,101 @@ abstract class Mob {
 	SpringValue sca = new SpringValue(1);
 	Point ang = new Point();
 	
+	void updatePoints() {
+		p.update();
+		ang.update();
+		sca.update();
+	}
+
+	void setDraw() {
+		push();
+		translate(p.p.x, p.p.y, p.p.z);
+		rotateX(ang.p.x);
+		rotateY(ang.p.y);
+		rotateZ(ang.p.z);
+	}
+
 	abstract void update();
 
 	abstract void render();
 }
 
-class Grass extends Mob {
-	Point w;
+abstract class MobF extends Mob {
 	AColor fillStyle = new AColor(0,0,0,0);
 	AColor strokeStyle = new AColor(0,0,0,0);
+
+	void updatePoints() {
+		p.update();
+		ang.update();
+		sca.update();
+		fillStyle.update();
+		strokeStyle.update();
+	}
+
+	void setDraw() {
+		push();
+		fillStyle.fillStyle();
+		strokeStyle.strokeStyle();
+		translate(p.p.x, p.p.y, p.p.z);
+		rotateX(ang.p.x);
+		rotateY(ang.p.y);
+		rotateZ(ang.p.z);
+	}
+}
+
+class TextBox extends MobF {
+	String string = "";
+
+	TextBox() {
+	}
+
+	void update() {
+		updatePoints();
+	}
+
+	void render() {
+		setDraw();
+		text(string, 0,0);
+		pop();
+	}
+}
+
+class Field extends Mob {
+	ArrayList<Grass> grass;
+	Point v = new Point();
+	Field(ArrayList<Grass> grass) {
+		this.grass = grass;
+	}
+
+	void update() {
+		v.update();
+		for (Grass gr : grass) {
+			gr.p.P.add(v.p);
+			if (gr.p.p.x > back.x) {
+				gr.p.p.x = front.x;
+				gr.p.P.x = front.x;
+			} else if (gr.p.p.x < front.x) {
+				gr.p.p.x = back.x;
+				gr.p.P.x = back.x;
+			} else if (gr.p.p.z < back.z) {
+				gr.p.p.z = front.z;
+				gr.p.P.z = front.z;
+			} else if (gr.p.p.z > front.z) {
+				gr.p.p.z = back.z;
+				gr.p.P.z = back.z;
+			}
+		}
+	}
+
+	void render() {
+		for (Grass gr : grass) {
+			gr.render();
+		}
+	}
+}
+
+class Grass extends MobF {
+	Point w;
 
 	Grass(PVector p, float w, float h) {
 		this.p = new Point(p);
@@ -22,25 +108,65 @@ class Grass extends Mob {
 	}
 
 	void update() {
-		p.update();
-		ang.update();
-		w.update();
-		sca.update();
-		fillStyle.update();
-		strokeStyle.update();
+		updatePoints();
 	}
 
 	void render() {
-		push();
-		fillStyle.fillStyle();
-		strokeStyle.strokeStyle();
-		translate(p.p.x,p.p.y,p.p.z);
-		rotateX(ang.p.x);
-		rotateY(ang.p.y);
-		rotateZ(ang.p.z);
+		setDraw();
 		quad(-w.p.x/2,0, 0,w.p.y, w.p.x/2,0, 0,-w.p.y);
 		rotateY(PI/2);
 		quad(-w.p.z/2,0, 0,w.p.y, w.p.z/2,0, 0,-w.p.y);
+		pop();
+	}
+
+	void setFillX(float r, float g, float b, float a) {
+		for (Grass gr : grass) {
+			gr.fillStyle.setX(r, g, b, a);
+		}
+	}
+}
+
+class Star extends MobF {
+
+	SpringValue r = new SpringValue(0.25);
+	Point w;
+
+	Star(PVector p, float w, float h) {
+		this.p = new Point(p);
+		this.ang = new Point();
+		this.w = new Point(w, h, w);
+	}
+
+	void update() {
+		updatePoints();
+		r.update();
+	}
+
+	void render() {
+		setDraw();
+		beginShape();
+		vertex(0,-w.p.y);
+		vertex(-w.p.x*r.x, -w.p.y*r.x);
+		vertex(-w.p.x,0);
+		vertex(-w.p.x*r.x, w.p.y*r.x);
+		vertex(0,w.p.y);
+		vertex(w.p.x*r.x, w.p.y*r.x);
+		vertex(w.p.x,0);
+		vertex(w.p.x*r.x, -w.p.y*r.x);
+		vertex(0,-w.p.y);
+		endShape();
+		rotateY(PI/2);
+		beginShape();
+		vertex(0,-w.p.y);
+		vertex(-w.p.z*r.x, -w.p.y*r.x);
+		vertex(-w.p.z,0);
+		vertex(-w.p.z*r.x, w.p.y*r.x);
+		vertex(0,w.p.y);
+		vertex(w.p.z*r.x, w.p.y*r.x);
+		vertex(w.p.z,0);
+		vertex(w.p.z*r.x, -w.p.y*r.x);
+		vertex(0,-w.p.y);
+		endShape();
 		pop();
 	}
 }
@@ -67,25 +193,34 @@ class Flower extends Mob {
 	}
 
 	void update() {
-		p.update();
-		sca.update();
-		ang.update();
+		updatePoints();
 		for (Ring ring : rings) {
 			ring.update();
 		}
 	}
 
 	void render() {
-		push();
-		translate(p.p.x, p.p.y, p.p.z);
-		scale(sca.x);
-		rotateX(ang.p.x);
-		rotateY(ang.p.y);
-		rotateZ(ang.p.z);
+		setDraw();
 		for (Ring ring : rings) {
 			ring.render();
 		}
 		pop();
+	}
+
+	void setFillX(float r, float g, float b, float a) {
+		for (Ring ring : rings) {
+			for (Triangle tri : ring.tris) {
+				tri.fillStyle.setX(r, g, b, a);
+			}
+		}
+	}
+
+	void setStrokeX(float r, float g, float b, float a) {
+		for (Ring ring : rings) {
+			for (Triangle tri : ring.tris) {
+				tri.strokeStyle.setX(r, g, b, a);
+			}
+		}
 	}
 }
 
@@ -103,21 +238,14 @@ class Ring extends Mob {
 	}
 
 	void update() {
-		p.update();
-		ang.update();
-		sca.update();
+		updatePoints();
 		for (Triangle tri : tris) {
 			tri.update();
 		}
 	}
 
 	void render() {
-		push();
-		translate(p.p.x, p.p.y, p.p.z);
-		scale(sca.x);
-		rotateX(ang.p.x);
-		rotateY(ang.p.y);
-		rotateZ(ang.p.z);
+		setDraw();
 		float angle = 2*PI/tris.size();
 		for (int i = 0 ; i < tris.size() ; i ++) {
 			rotateZ(angle);
@@ -127,12 +255,10 @@ class Ring extends Mob {
 	}
 }
 
-class Triangle extends Mob {
+class Triangle extends MobF {
 	
 	float w;
 	float h;
-	AColor fillStyle = new AColor(0,0,0,0);
-	AColor strokeStyle = new AColor(0,0,0,0);
 
 	Triangle(PVector p, PVector ang, float w) {
 		this.p = new Point(p);
@@ -142,34 +268,18 @@ class Triangle extends Mob {
 	}
 
 	void update() {
-		p.update();
-		sca.update();
-		ang.update();
-		fillStyle.update();
-		strokeStyle.update();
+		updatePoints();
 	}
 
 	void render() {
 		if (draw) {
-			push();
-			fillStyle.fillStyle();
-			strokeStyle.strokeStyle();
-			translate(p.p.x, p.p.y, p.p.z);
-			rotateX(ang.p.x);
-			rotateY(ang.p.y);
-			rotateZ(ang.p.z-PI/2);
+			setDraw();
 			beginShape();
 			vertex(-w, 0, 0);
 			vertex(cos60*w, sin60*w, 0);
 			vertex(cos60*w, -sin60*w, 0);
 			vertex(-w, 0, 0);
 			endShape();
-			// beginShape();
-			// vertex(w, 0, -h);
-			// vertex(-cos60*w, sin60*w, -h);
-			// vertex(-cos60*w, -sin60*w, -h);
-			// vertex(w, 0, -h);
-			// endShape();
 			rotateX(PI/2);
 			pop();
 		}

@@ -27,6 +27,7 @@ ArrayList<Grass> grass = new ArrayList<Grass>();
 Flower flowerM;
 Flower flowerR;
 Flower flowerL;
+Field field;
 ArrayList<Triangle> trisM = new ArrayList<Triangle>();
 ArrayList<Triangle> trisR = new ArrayList<Triangle>();
 ArrayList<Triangle> trisL = new ArrayList<Triangle>();
@@ -38,10 +39,8 @@ AColor mobFill = new AColor(255,255,255,255,0.5,10);
 
 static int de; //width of screen de*2
 static int aw; //Animation depth
-static int gridW;
-static int gridX;
-static int gridY;
-static int gridZ;
+static PVector front;
+static PVector back;
 static float defaultMass = 10;
 static float defaultVMult = 0.25;
 
@@ -59,11 +58,9 @@ void setup() {
   size(600,600,P3D);
 
   de = (int)(min(width,height)*1);
-  aw = (int)(2*de);
-  gridW = 2*de/10;
-  gridX = 2*de/gridW;
-  gridY = 2*de/gridW;
-  gridZ = 2*aw/gridW;
+  aw = (int)(4*de);
+  front = new PVector(-de*2,de*1.2,de*0.4);
+  back = new PVector(de*2,-de,-aw);
 
   cam = new Camera(de/2, de*0.2, -de);
   cam.ang.P.set(0.3,0,0);
@@ -85,8 +82,8 @@ void setup() {
   timer = new BeatTimer(50,-offset,bpm);
 
   mobs.add(new Flower(new PVector(0,-de*0.7,-aw), new PVector(0,0,0), de*0.65,6));
-  mobs.add(new Flower(new PVector(-de*0.6,0,0), new PVector(0,1,0), de*0.3,5));
-  mobs.add(new Flower(new PVector(de*0.6,0,0), new PVector(0,-1,0), de*0.3,5));
+  mobs.add(new Flower(new PVector(-de*0.6,-de*0.4,0), new PVector(-PI/2,0,0), de*0.3,5));
+  mobs.add(new Flower(new PVector(de*0.6,-de*0.4,0), new PVector(-PI/2,0,0), de*0.3,5));
   flowerM = (Flower) mobs.get(0);
   flowerR = (Flower) mobs.get(1);
   flowerL = (Flower) mobs.get(2);
@@ -117,18 +114,16 @@ void setup() {
     }
   }
 
-  float wX = de*8;
-  float wZ = de*7;
-  float X = 0;
-  float Z = -aw*1.5;
-  int row = (int)20;
+  int row = 20;
   for (int i = 0 ; i < row ; i ++) {
     for (int k = 0 ; k < row ; k++) {
-      mobs.add(new Grass(new PVector(X + wX * ((float)i/row - 0.5),de*1.2,Z + wZ * ((float)k/row - 0.5)), de*0.2,de*0.1));
-      //mobs.add(new Grass(new PVector(random(-1,1)*de, random(-1,1)*de, random(-1,1)*aw), de*0.2,de*0.1));
+      mobs.add(new Grass(new PVector(front.x - (float)i/row*(float)(front.x - back.x), 
+      	front.y, front.z - (float)k/row*(float)(front.z - back.z)), de*0.2,de*0.1));
       grass.add((Grass) mobs.get(mobs.size() -1));
     }
   }
+  mobs.add(new Field(grass));
+  field = (Field) mobs.get(mobs.size() - 1);
 }
 
 void draw() {
@@ -157,8 +152,8 @@ void update() {
   currTime = song.position();
 
   cam.update();
-  //cam.ang.P.y = -(float)mouseX/width*2*PI;
-  //cam.ang.P.x = -(float)mouseY/height*2*PI;
+  // cam.ang.P.y = -(float)mouseX/width*2*PI;
+  // cam.ang.P.x = -(float)mouseY/height*2*PI;
   mobFill.update();
   mobStroke.update();
   timer.update();

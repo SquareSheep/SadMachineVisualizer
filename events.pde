@@ -4,6 +4,11 @@ class Event {
 	int time;
 	int timeEnd;
 
+	Event(int time, int timeEnd) {
+		this.time = time;
+		this.timeEnd = timeEnd;
+	}
+
 	void update() {
 
 	}
@@ -17,48 +22,139 @@ class Event {
 	}
 }
 // 3700, 14600, 25500, 47200, 57600
-class Although682 {
-	Although682() {
-		time = 68200;
-		timeEnd = 100000;
+class Alone extends Event {
+	Alone(int time, int timeEnd) {
+		super(time, timeEnd);
 	}
 
 	void spawn() {
-		for (Grass gr : grass) {
-			gr.fillStyle.setx(255,255,255,255);
-			gr.fillStyle.setx(0,0,0,255);
-			gr.fillStyle.setMass(5);
-		}
+		field.v.P.mult(2);
+	}
+
+	void update() {
+
+	}
+
+}
+
+class Although2 extends Event {
+
+	Although2(int time, int timeEnd) {
+		super(time, timeEnd);
+	}
+
+	void spawn() {
+		flowerR.draw = true;
+		flowerL.draw = true;
+		flowerM.draw = false;
 		for (Triangle tri : trisR) {
-			tri.fillStyle.setMass(15);
+			tri.fillStyle.setMass(2);
 			tri.fillStyle.setX(0,0,0,255);
+			tri.strokeStyle.setX(0,0,0,255);
 		}
 		for (Triangle tri : trisL) {
-			tri.fillStyle.setMass(15);
+			tri.fillStyle.setMass(2);
 			tri.fillStyle.setX(0,0,0,255);
+			tri.strokeStyle.setX(0,0,0,255);
 		}
 	}
 
 	void update() {
+		for (int i = 0 ; i < flowerR.rings.size() ; i ++) {
+			Ring ring = flowerR.rings.get(i);
+			Ring ring2 = flowerL.rings.get(i);
+			if (i % 2 == 0) {
+				ring.ang.P.z += 0.01;
+				ring2.ang.P.z -= 0.01;
+			} else {
+				ring.ang.P.z -= 0.01;
+				ring2.ang.P.z += 0.01;
+			}
+		}
 		int k;
 		for (int i = 0 ; i < grass.size() ; i ++) {
 			Grass gr = grass.get(i);
 			k = i%binCount;
 			gr.fillStyle.r.X = av[k]*15;
-			gr.fillStyle.g.X = av[k]*3;
-			gr.fillStyle.b.X = av[k]*15;
+			gr.fillStyle.g.X = av[k]*5;
+			gr.fillStyle.b.X = av[k]*5;
 			gr.w.v.y += av[k]*1.5;
 	  	}
+		for (int i = 0 ; i < trisR.size() ; i ++) {
+			Triangle tri = trisR.get(i);
+			k = (int)((float)i/tris.size()*binCount);
+			tri.fillStyle.r.X = av[k]*5;
+			tri.fillStyle.g.X = av[k]*3;
+			tri.fillStyle.b.X = av[k]*15;
+		}
+		for (int i = 0 ; i < trisL.size() ; i ++) {
+			Triangle tri = trisL.get(i);
+			k = (int)((float)i/tris.size()*binCount);
+			tri.fillStyle.b.X = av[k]*5;
+			tri.fillStyle.r.X = av[k]*3;
+			tri.fillStyle.g.X = av[k]*15;
+		}
 	}
 }
 
-class Survived472s682 extends Event {
-	Survived472s682() {
-		time = 47200;
-		timeEnd = 68200;
+class Although extends Event {
+
+	Although(int time, int timeEnd) {
+		super(time, timeEnd);
 	}
 
 	void spawn() {
+		flowerR.draw = true;
+		flowerM.draw = false;
+		for (Triangle tri : trisR) {
+			tri.fillStyle.setMass(2);
+			tri.fillStyle.setX(0,0,0,255);
+			tri.strokeStyle.setX(0,0,0,255);
+		}
+		for (Triangle tri : trisL) {
+			tri.fillStyle.setMass(2);
+			tri.fillStyle.setX(0,0,0,255);
+			tri.strokeStyle.setX(0,0,0,255);
+		}
+		field.v.P.set(0,0,de*0.01);
+	}
+
+	void update() {
+		for (int i = 0 ; i < flowerR.rings.size() ; i ++) {
+			Ring ring = flowerR.rings.get(i);
+			if (i % 2 == 0) {
+				ring.ang.P.z += 0.01;
+			} else {
+				ring.ang.P.z -= 0.01;
+			}
+		}
+		int k;
+		for (int i = 0 ; i < grass.size() ; i ++) {
+			Grass gr = grass.get(i);
+			k = i%binCount;
+			gr.fillStyle.r.X = av[k]*15;
+			gr.fillStyle.g.X = av[k]*5;
+			gr.fillStyle.b.X = av[k]*5;
+			gr.w.v.y += av[k]*1.5;
+	  	}
+		for (int i = 0 ; i < trisR.size() ; i ++) {
+			Triangle tri = trisR.get(i);
+			k = (int)((float)i/tris.size()*binCount);
+			tri.fillStyle.r.X = av[k]*5;
+			tri.fillStyle.g.X = av[k]*3;
+			tri.fillStyle.b.X = av[k]*15;
+		}
+	}
+}
+
+class Survived extends Event {
+
+	Survived(int time, int timeEnd) {
+		super(time, timeEnd);
+	}
+
+	void spawn() {
+		field.v.P.set(de*0.003,0,0);
 		for (Grass gr : grass) {
 			gr.fillStyle.setx(255,255,255,255);
 			gr.fillStyle.setx(0,0,0,255);
@@ -69,7 +165,7 @@ class Survived472s682 extends Event {
 		flowerM.sca.mass = 10;
 		for (Triangle tri : trisM) {
 			tri.fillStyle.setMass(15);
-			tri.fillStyle.setX(0,0,0,255);
+			tri.fillStyle.setX(0,0,0,0);
 		}
 	}
 
@@ -78,17 +174,17 @@ class Survived472s682 extends Event {
 		for (int i = 0 ; i < grass.size() ; i ++) {
 			Grass gr = grass.get(i);
 			k = i%binCount;
-			gr.fillStyle.r.X = av[k]*15;
-			gr.fillStyle.g.X = av[k]*3;
-			gr.fillStyle.b.X = av[k]*15;
+			gr.fillStyle.b.X = av[k]*5;
+			gr.fillStyle.r.X = av[k]*3;
+			gr.fillStyle.g.X = av[k]*15;
 			gr.w.v.y += av[k]*1.5;
 	  	}
 	}
 }
-class Drop255s472 extends Event {
-	Drop255s472() {
-		time = 25500;
-		timeEnd = 47200;
+class Drop1 extends Event {
+
+	Drop1(int time, int timeEnd) {
+		super(time, timeEnd);
 	}
 
 	void spawn() {
@@ -100,13 +196,15 @@ class Drop255s472 extends Event {
 		flowerM.ang.P.set(0,0,0);
 		flowerM.sca.X = 1.3;
 		flowerM.sca.mass = 2;
-		flowerM.p.P.set(0,0,-de*0.3);
+		flowerM.p.P.set(0,0,-de*0.7);
 		for (Triangle tri : trisM) {
 			tri.fillStyle.setMass(2);
 		}
+		field.v.P.z = de*0.03;
 	}
 
 	void update() {
+		flowerM.p.P.z += de*0.0005;
 		for (int i = 0 ; i < flowerM.rings.size() ; i ++) {
 			Ring ring = flowerM.rings.get(i);
 			if (i % 2 == 0) {
@@ -134,10 +232,10 @@ class Drop255s472 extends Event {
 	}
 }
 
-class Build146s255 extends Event {
-	Build146s255() {
-		time = 14600;
-		timeEnd = 25500;
+class Main1 extends Event {
+
+	Main1(int time, int timeEnd) {
+		super(time, timeEnd);
 	}
 
 	void spawn() {
@@ -178,10 +276,10 @@ class Build146s255 extends Event {
 	}
 }
 
-class Play37s146 extends Event {
-	Play37s146() {
-		time = 3700;
-		timeEnd = 14600;
+class Intro extends Event {
+
+	Intro(int time, int timeEnd) {
+		super(time, timeEnd);
 	}
 
 	void spawn() {
@@ -212,10 +310,10 @@ class Play37s146 extends Event {
 }
 
 // Is anyone there?
-class Anyone0s37 extends Event {
-	Anyone0s37() {
-		time = 0;
-		timeEnd = 3610;
+class Anyone extends Event {
+
+	Anyone(int time, int timeEnd) {
+		super(time, timeEnd);
 	}
 
 	void spawn() {
@@ -249,9 +347,9 @@ class Anyone0s37 extends Event {
 }
 
 class RestartSong extends Event {
+	
 	RestartSong(int time) {
-		this.time = time;
-		this.timeEnd = time + 200;
+		super(time, time+200);
 	}
 
 	void spawn() {
