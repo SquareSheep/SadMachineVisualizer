@@ -271,7 +271,7 @@ class BeatTimer {
   }
 
   void update() {
-    float currMil = currTime % (60000.0/bpm);
+    float currMil = (currTime + offset) % (60000.0/bpm);
     if (!beatAlready && currMil < threshold) {
       beat = true;
       beatAlready = true;

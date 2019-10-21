@@ -13,15 +13,11 @@ class Event {
 
 	}
 
-	void render() {
-		
-	}
-
 	void spawn() {
 
 	}
 }
-// 3700, 14600, 25500, 47200, 57600
+
 class Alone extends Event {
 	Alone(int time, int timeEnd) {
 		super(time, timeEnd);
@@ -309,7 +305,6 @@ class Intro extends Event {
 	}
 }
 
-// Is anyone there?
 class Anyone extends Event {
 
 	Anyone(int time, int timeEnd) {
@@ -342,27 +337,6 @@ class Anyone extends Event {
 			tri.fillStyle.g.X = pow(av[k],1.6)*10;
 			tri.fillStyle.b.X = pow(av[k],1.6)*10;
 			tri.fillStyle.r.X = pow(av[k],1.6)*10;
-		}
-	}
-}
-
-class RestartSong extends Event {
-	
-	RestartSong(int time) {
-		super(time, time+200);
-	}
-
-	void spawn() {
-		println("RESTART");
-		seekTo(0);
-		mobs.clear();
-		flowers.clear();
-		rings.clear();
-		tris.clear();
-		grass.clear();
-		for (Event event : events) {
-			event.spawned = false;
-			event.finished = false;
 		}
 	}
 }

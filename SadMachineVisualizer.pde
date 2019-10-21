@@ -1,4 +1,4 @@
-static float bpm = 89.5;
+static float bpm = 88.5;
 static float mspb = 1;
 static float framesPerBeat = 1;
 static float cos60 = cos(PI/3);
@@ -47,7 +47,7 @@ static float defaultVMult = 0.25;
 
 BeatTimer timer;
 int currTime;
-int offset;
+int currBeat;
 
 // ---------------------------------------------
 
@@ -55,7 +55,7 @@ int offset;
 void setup() {
   frameRate(60);
   //fullScreen(P3D);
-  size(600,600,P3D);
+  size(1000,1000,P3D);
 
   de = (int)(min(width,height)*1);
   aw = (int)(4*de);
@@ -78,8 +78,7 @@ void setup() {
 
   song.loop();
 
-  offset = millis();
-  timer = new BeatTimer(50,-offset,bpm);
+  timer = new BeatTimer(50,600,bpm);
 
   mobs.add(new Flower(new PVector(0,-de*0.7,-aw), new PVector(0,0,0), de*0.65,6));
   mobs.add(new Flower(new PVector(-de*0.6,-de*0.4,0), new PVector(-PI/2,0,0), de*0.3,5));
@@ -136,13 +135,13 @@ void draw() {
   // drawBorders();
   // drawWidthBox(de);
   // drawPitches();
+  // push();
+  // translate(0,0,0);
+  // text(currBeat,0,0);
+  // pop();
 
   for (Mob mob : mobs) {
     if (mob.draw) mob.render();
-  }
-
-  for (Event event : events) {
-  	event.render();
   }
 }
 
@@ -150,6 +149,7 @@ void update() {
   calcFFT();
 
   currTime = song.position();
+  if (timer.beat) currBeat ++;
 
   cam.update();
   // cam.ang.P.y = -(float)mouseX/width*2*PI;
@@ -165,7 +165,7 @@ void update() {
 void updateEvents() {
   for (int i = 0 ; i < events.size() ; i ++) {
     Event event = events.get(i);
-    if (currTime > event.time && currTime < event.timeEnd) {
+    if (currBeat >= event.time && currBeat < event.timeEnd) {
       if (!event.spawned) {
         event.spawned = true;
         event.spawn();
