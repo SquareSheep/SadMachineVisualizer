@@ -37,7 +37,7 @@ void seekTo(float time) {
 }
 
 void keyPressed() {
-  println("KEY: " + key + " " + currTime);
+  println("KEY: " + key + " " + currTime + " " + currBeat);
 }
 
 void drawPitches() {

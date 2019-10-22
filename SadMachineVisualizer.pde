@@ -23,11 +23,13 @@ ArrayList<Flower> flowers = new ArrayList<Flower>();
 ArrayList<Ring> rings = new ArrayList<Ring>();
 ArrayList<Triangle> tris = new ArrayList<Triangle>();
 ArrayList<Grass> grass = new ArrayList<Grass>();
+ArrayList<Star> stars = new ArrayList<Star>();
 
 Flower flowerM;
 Flower flowerR;
 Flower flowerL;
 Field field;
+StarField sield;
 ArrayList<Triangle> trisM = new ArrayList<Triangle>();
 ArrayList<Triangle> trisR = new ArrayList<Triangle>();
 ArrayList<Triangle> trisL = new ArrayList<Triangle>();
@@ -55,12 +57,12 @@ int currBeat;
 void setup() {
   frameRate(60);
   //fullScreen(P3D);
-  size(1000,1000,P3D);
+  size(600,600,P3D);
 
   de = (int)(min(width,height)*1);
   aw = (int)(4*de);
   front = new PVector(-de*2,de*1.2,de*0.4);
-  back = new PVector(de*2,-de,-aw);
+  back = new PVector(de*2,-de*2,-aw);
 
   cam = new Camera(de/2, de*0.2, -de);
   cam.ang.P.set(0.3,0,0);
@@ -123,6 +125,12 @@ void setup() {
   }
   mobs.add(new Field(grass));
   field = (Field) mobs.get(mobs.size() - 1);
+  for (int i = 0 ; i < 100 ; i ++) {
+    mobs.add(new Star(new PVector(random(front.x,back.x), random(back.y, front.y), random(back.z, front.z)), de*0.02, de*0.02));
+    stars.add((Star) mobs.get(mobs.size() - 1));
+  }
+  mobs.add(new StarField(stars));
+  sield = (StarField) mobs.get(mobs.size() - 1);
 }
 
 void draw() {

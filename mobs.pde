@@ -64,6 +64,46 @@ class TextBox extends MobF {
 	}
 }
 
+class StarField extends Mob {
+	ArrayList<Star> stars;
+	Point v = new Point();
+	StarField(ArrayList<Star> stars) {
+		this.stars = stars;
+	}
+
+	void update() {
+		v.update();
+		for (Star gr : stars) {
+			gr.p.P.add(v.p);
+			if (gr.p.p.x > back.x) {
+				gr.p.p.x = front.x;
+				gr.p.P.x = front.x;
+			} else if (gr.p.p.x < front.x) {
+				gr.p.p.x = back.x;
+				gr.p.P.x = back.x;
+			} else if (gr.p.p.y < back.y) {
+				gr.p.p.y = front.y;
+				gr.p.P.y = front.y;
+			} else if (gr.p.p.y > front.y) {
+				gr.p.p.y = back.y;
+				gr.p.P.y = back.y;
+			} else if (gr.p.p.z < back.z) {
+				gr.p.p.z = front.z;
+				gr.p.P.z = front.z;
+			} else if (gr.p.p.z > front.z) {
+				gr.p.p.z = back.z;
+				gr.p.P.z = back.z;
+			}
+		}
+	}
+
+	void render() {
+		for (Star gr : stars) {
+			gr.render();
+		}
+	}
+}
+
 class Field extends Mob {
 	ArrayList<Grass> grass;
 	Point v = new Point();
@@ -117,12 +157,6 @@ class Grass extends MobF {
 		rotateY(PI/2);
 		quad(-w.p.z/2,0, 0,w.p.y, w.p.z/2,0, 0,-w.p.y);
 		pop();
-	}
-
-	void setFillX(float r, float g, float b, float a) {
-		for (Grass gr : grass) {
-			gr.fillStyle.setX(r, g, b, a);
-		}
 	}
 }
 
